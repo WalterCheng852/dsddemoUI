@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外判工程系統 (SWAC) - Contractor Site Work System</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <!-- Header - 固定喺頂部 -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="header-title">外判工程系統 (SWAC) - Contractor Site Work System - Government Module</h1>
+                <p class="header-time" id="currentTime">載入中...</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-outline" id="refreshBtn">
+                    <i data-lucide="refresh-cw"></i>
+                    刷新
+                </button>
+                <button class="btn btn-outline btn-danger">
+                    <i data-lucide="log-out"></i>
+                    登出
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <button class="nav-btn nav-btn-active" data-page="dashboard">
+                儀表板
+            </button>
+            <button class="nav-btn" data-page="form-registration">
+                表格登記
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="container">
+                <!-- Top Row: Metrics Grid (70%) + Checkout Reminders (30%) -->
+                <div class="top-row">
+                    <!-- Metrics Grid - 70% width -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-number">16</div>
+                            <div class="metric-label">仍在進行中的外判工程</div>
+                            <div class="metric-unit">單</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">16</div>
+                            <div class="metric-label">今日共有外判工程</div>
+                            <div class="metric-success">入場登記 18 單</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">2</div>
+                            <div class="metric-label">密閉空間工作</div>
+                            <div class="metric-success">2 入場登記</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">1</div>
+                            <div class="metric-label">熱工作</div>
+                            <div class="metric-success">1 入場登記</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">1</div>
+                            <div class="metric-label">離地工作</div>
+                            <div class="metric-success">1 入場登記</div>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Reminders - 30% width -->
+                    <div class="reminders-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i data-lucide="clock"></i>
+                                離場提醒
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="reminder-item reminder-overdue">
+                                <div class="reminder-content">
+                                    <p class="reminder-status">逾期</p>
+                                    <p class="reminder-text"><strong>Wong Tai Man</strong> 預計 15:30</p>
+                                </div>
+                                <div class="reminder-actions">
+                                    <button class="btn-icon">
+                                        <i data-lucide="map-pin"></i>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <i data-lucide="users"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="reminder-item reminder-upcoming">
+                                <div class="reminder-content">
+                                    <p class="reminder-status">即將到期</p>
+                                    <p class="reminder-text"><strong>Chen</strong> 30 分鐘後</p>
+                                </div>
+                                <button class="btn btn-outline btn-sm">提醒</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Worker Summary Table -->
+                <div class="table-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">工人摘要 - 詳細視圖</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>序號</th>
+                                            <th>工程人員登記資料</th>
+                                            <th>渠務署負責職員</th>
+                                            <th>工種</th>
+                                            <th>設備配置</th>
+                                            <th>查核人員</th>
+                                            <th>狀態</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="workersTableBody">
+                                        <!-- Worker data will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Tracking -->
+                <div class="device-tracking">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i data-lucide="radio"></i>
+                                設備追蹤
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <!-- Walkie-talkies -->
+                            <div class="device-section">
+                                <div class="device-header">
+                                    <div class="device-info">
+                                        <i data-lucide="radio"></i>
+                                        <span>對講機</span>
+                                    </div>
+                                    <div class="device-stats">
+                                        <span>已借用: <strong id="walkieBorrowed">5</strong></span>
+                                        <span>已歸還: <strong id="walkieReturned">2</strong></span>
+                                        <span class="badge badge-error" id="walkieStatus">未歸還</span>
+                                    </div>
+                                </div>
+                                <div class="device-details" id="walkieDetails">
+                                    <!-- Device details will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- CCTV Equipment -->
+                            <div class="device-section">
+                                <div class="device-header">
+                                    <div class="device-info">
+                                        <i data-lucide="camera"></i>
+                                        <span>閉路電視設備</span>
+                                    </div>
+                                    <div class="device-stats">
+                                        <span>已借用: <strong id="cctvBorrowed">2</strong></span>
+                                        <span>已歸還: <strong id="cctvReturned">0</strong></span>
+                                        <span class="badge badge-error" id="cctvStatus">未歸還</span>
+                                    </div>
+                                </div>
+                                <div class="device-details" id="cctvDetails">
+                                    <!-- Device details will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Registration Page -->
+        <div id="form-registration-page" class="page">
+            <div class="container">
+                <!-- User Selection Screen -->
+                <div id="user-selection" class="user-selection">
+                    <div class="selection-card">
+                        <div class="card-header text-center">
+                            <h2 class="card-title">選擇使用方式</h2>
+                            <p class="card-subtitle">請選擇您的使用方式以獲得最佳體驗</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="selection-grid">
+                                <div class="selection-option" data-option="existing">
+                                    <div class="option-icon">
+                                        <i data-lucide="rotate-ccw"></i>
+                                    </div>
+                                    <h3>舊用戶快速載入</h3>
+                                    <p>載入昨日數據，快速完成今日登記</p>
+                                    <button class="btn btn-primary">快速載入</button>
+                                </div>
+                                <div class="selection-option" data-option="new">
+                                    <div class="option-icon">
+                                        <i data-lucide="plus"></i>
+                                    </div>
+                                    <h3>新用戶完整表格</h3>
+                                    <p>首次使用或需要重新填寫所有資料</p>
+                                    <button class="btn btn-outline">新建表格</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Content (Hidden initially) -->
+                <div id="form-content" class="form-content" style="display: none;">
+                    <!-- SWAC Table Section -->
+                    <div class="form-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    每日 SWAC
+                                    <i data-lucide="info" class="info-icon"></i>
+                                </h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>選擇</th>
+                                                <th>編號</th>
+                                                <th>工作訂單編號</th>
+                                                <th>合同標題</th>
+                                                <th>期限</th>
+                                                <th>EMM</th>
+                                                <th>位置</th>
+                                                <th>開始時間</th>
+                                                <th>結束時間</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="swacTableBody">
+                                            <!-- SWAC data will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SWAC Daily Section -->
+                    <div class="form-section" id="swac-daily" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">SWAC 每日</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="todayWorkContent">今天工作內容</label>
+                                        <input type="text" id="todayWorkContent" class="form-input" placeholder="請輸入工作內容">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="workLocation">工作地點</label>
+                                        <input type="text" id="workLocation" class="form-input" placeholder="請輸入工作地點">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>工作類型</label>
+                                        <div class="checkbox-group">
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" value="高空工作">
+                                                <span>高空工作 (Height Work)</span>
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" value="熱工作">
+                                                <span>熱工作 (Heat Work)</span>
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" value="密閉空間工作">
+                                                <span>密閉空間工作 (Confined Space)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="expectedDepartureTime">預計離開時間</label>
+                                        <input type="time" id="expectedDepartureTime" class="form-input" value="18:00">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="supervisor">承辦商現場負責人</label>
+                                        <select id="supervisor" class="form-select">
+                                            <option value="">請選擇</option>
+                                            <option value="supervisor1">CHAN TAI MAN</option>
+                                            <option value="supervisor2">WONG KAM WAH</option>
+                                            <option value="supervisor3">LEE SIU MING</option>
+                                        </select>
+                                        <input type="text" class="form-input" placeholder="負責人 Tel: 12345678">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workers Section -->
+                    <div class="form-section" id="workers-section" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    工人數目: <span id="workerCount">0</span>
+                                </h3>
+                                <button class="btn btn-outline btn-sm" id="addWorkerBtn">
+                                    <i data-lucide="plus"></i>
+                                    添加工人
+                                </button>
+                            </div>
+                            <div class="card-content">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>選擇</th>
+                                                <th>姓名</th>
+                                                <th>電話</th>
+                                                <th>綠卡號碼</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="workersFormTableBody">
+                                            <!-- Workers form data will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Fields -->
+                    <div class="form-section" id="additional-fields" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">其他資料</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="siteWorkerInfo">現場開工工人稱呼及電話</label>
+                                        <input type="text" id="siteWorkerInfo" class="form-input" placeholder="請輸入現場工人聯絡資訊">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cctvInfo">CCTV Info</label>
+                                        <textarea id="cctvInfo" class="form-textarea" placeholder="URL: http://example.com&#10;Username: user123&#10;Password: ******" rows="3"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultant">顧問機構/承辦商</label>
+                                        <select id="consultant" class="form-select">
+                                            <option value="">請選擇</option>
+                                            <option value="consultant1">顧問機構 A</option>
+                                            <option value="consultant2">顧問機構 B</option>
+                                            <option value="contractor1">承辦商 A</option>
+                                            <option value="contractor2">承辦商 B</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="personInCharge">負責人姓名</label>
+                                        <select id="personInCharge" class="form-select">
+                                            <option value="">請選擇</option>
+                                            <option value="person1">張三</option>
+                                            <option value="person2">李四</option>
+                                            <option value="person3">王五</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="walkieTalkie">Walkie Talkie</label>
+                                        <select id="walkieTalkie" class="form-select">
+                                            <option value="">請選擇</option>
+                                            <option value="assigned">已分配</option>
+                                            <option value="pending">待分配</option>
+                                            <option value="not-required">不需要</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="signatureConfirmation">簽署確認證</label>
+                                        <input type="text" id="signatureConfirmation" class="form-input" placeholder="請輸入簽署確認證">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="numbersOfDevice">四合一手提氣體檢測儀 數量</label>
+                                        <input type="number" id="numbersOfDevice" class="form-input" placeholder="輸入設備數量" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="chouNumber">籌號</label>
+                                        <input type="text" id="chouNumber" class="form-input" placeholder="請輸入籌號">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Section -->
+                    <div class="form-section" id="submission-section" style="display: none;">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="submission-actions">
+                                    <div class="action-buttons">
+                                        <button class="btn btn-primary">保存</button>
+                                        <button class="btn btn-danger">拒絕</button>
+                                    </div>
+                                    <div class="submission-note">
+                                        💡 記錄可以在 DSD 職員點擊「開始工作」按鈕之前隨時保存
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rejection Modal -->
+    <div id="rejectionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>拒絕登記</h3>
+                <button class="modal-close" id="closeModal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rejectionReason">拒絕原因</label>
+                    <textarea id="rejectionReason" class="form-textarea" placeholder="輸入原因，例如：暴雨警告" rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelRejection">取消</button>
+                <button class="btn btn-danger" id="confirmRejection">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>載入中...</p>
+    </div>
+
+    <script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96abe15ab846df9d',t:'MTc1NDQ1NTQ3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html> 
