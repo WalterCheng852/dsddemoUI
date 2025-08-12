@@ -10,6 +10,7 @@ const sampleWorkers = [
         greenCardNumber: "HRM00319579",
         location: "MPS2-B1 1/F",
         workType: "密閉空間工作",
+        workTypeColor: "confined-space",
         status: "Active",
         workContent: "安裝伺服器機架和電源插座",
         company: "XXXX工程服務有限公司",
@@ -43,6 +44,7 @@ const sampleWorkers = [
         greenCardNumber: "ATA7354",
         location: "MPS2-B1 2/F",
         workType: "離地工作",
+        workTypeColor: "height-work",
         status: "Active",
         workContent: "高架平台維護工作",
         company: "ABC建築有限公司",
@@ -76,6 +78,7 @@ const sampleWorkers = [
         greenCardNumber: "GRM12345",
         location: "MPS2-B1 3/F",
         workType: "熱工作",
+        workTypeColor: "heat-work",
         status: "Pending Checkout",
         expectedOut: "15:30",
         workContent: "焊接和熱切割作業",
@@ -100,6 +103,40 @@ const sampleWorkers = [
             check: "07-11 07:35",
             entry: "07-11 07:40",
             mps2Entry: "07-11 08:00",
+        },
+    },
+    {
+        id: "4",
+        serialNumber: "004",
+        name: "Lee Siu Ming",
+        phone: "61234567",
+        greenCardNumber: "GRM54321",
+        location: "MPS2-B1 4/F",
+        workType: "一般工作",
+        workTypeColor: "normal-work",
+        status: "Active",
+        workContent: "一般維修和保養工作",
+        company: "一般工程有限公司",
+        supervisor: "LEE SIU MING",
+        supervisorTel: "87654321",
+        workerCount: 3,
+        onSiteWorkerInfo: "Lee Siu Ming, 工人A, 工人B",
+        permitNumber: "WO-00458",
+        additionalWorker: "",
+        workTypes: "一般維修工作",
+        dsdOfficer: "WONG TAI MAN",
+        tokenNumber: "4",
+        walkieTalkieCount: 1,
+        cctvInfo: "",
+        gasDetectorCount: 0,
+        checkInPerson: "WONG TAI MAN",
+        confirmEntryPerson: "WONG TAI MAN",
+        mps2ConfirmPerson: "監督員03",
+        timestamps: {
+            registration: "2025-07-11 10:00",
+            check: "07-11 10:05",
+            entry: "07-11 10:10",
+            mps2Entry: "07-11 10:30",
         },
     },
 ];
@@ -127,13 +164,7 @@ const deviceAssignments = [
     {
         deviceId: "WT-004",
         team: "隊伍 B",
-        worker: "Li Ming",
-        borrowedTime: "09:15",
-    },
-    {
-        deviceId: "WT-005",
-        team: "隊伍 C",
-        worker: "Chen Liping",
+        worker: "Lee Siu Ming",
         borrowedTime: "10:00",
     },
     {
@@ -242,6 +273,22 @@ function getStatusBadge(status) {
     }
 }
 
+// Get work type badge HTML with colors
+function getWorkTypeBadge(workType, workTypeColor) {
+    switch (workTypeColor) {
+        case "confined-space":
+            return '<span class="badge badge-confined-space"><i data-lucide="box"></i>密閉空間工作</span>';
+        case "height-work":
+            return '<span class="badge badge-height-work"><i data-lucide="trending-up"></i>離地工作</span>';
+        case "heat-work":
+            return '<span class="badge badge-heat-work"><i data-lucide="flame"></i>熱工作</span>';
+        case "normal-work":
+            return '<span class="badge badge-normal-work"><i data-lucide="wrench"></i>一般工作</span>';
+        default:
+            return `<span class="badge badge-secondary">${workType}</span>`;
+    }
+}
+
 // Initialize Lucide icons
 function initializeIcons() {
     if (window.lucide) {
@@ -347,7 +394,7 @@ function populateWorkersTable() {
                 </div>
             </td>
             <td>${worker.dsdOfficer}</td>
-            <td><span class="badge badge-secondary">${worker.workType}</span></td>
+            <td>${getWorkTypeBadge(worker.workType, worker.workTypeColor)}</td>
             <td>
                 <div style="font-size: 0.75rem;">
                     <div>籌號: ${worker.tokenNumber}</div>

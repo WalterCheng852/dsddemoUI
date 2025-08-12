@@ -440,6 +440,27 @@ body {
     color: var(--gov-text);
 }
 
+/* Work type specific badges */
+.badge-confined-space {
+    background: #8B5CF6;
+    color: var(--gov-white);
+}
+
+.badge-height-work {
+    background: #3B82F6;
+    color: var(--gov-white);
+}
+
+.badge-heat-work {
+    background: #F97316;
+    color: var(--gov-white);
+}
+
+.badge-normal-work {
+    background: #6B7280;
+    color: var(--gov-white);
+}
+
 /* ===== DEVICE TRACKING ===== */
 
 .device-section {
